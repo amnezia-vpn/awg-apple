@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+// Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import UIKit
 
@@ -41,13 +41,21 @@ class TunnelListCell: UITableViewCell {
         label.font = UIFont.preferredFont(forTextStyle: .caption2)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 1
-        label.textColor = .secondaryLabel
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .gray
+        }
         return label
     }()
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
-        busyIndicator = UIActivityIndicatorView(style: .medium)
+        if #available(iOS 13.0, *) {
+            busyIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            busyIndicator = UIActivityIndicatorView(style: .gray)
+        }
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()

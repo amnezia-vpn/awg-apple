@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+// Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import UIKit
 import MobileCoreServices
@@ -33,7 +33,11 @@ class TunnelsListTableViewController: UIViewController {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
-        busyIndicator = UIActivityIndicatorView(style: .medium)
+        if #available(iOS 13.0, *) {
+            busyIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            busyIndicator = UIActivityIndicatorView(style: .gray)
+        }
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()
@@ -47,7 +51,11 @@ class TunnelsListTableViewController: UIViewController {
 
     override func loadView() {
         view = UIView()
-        view.backgroundColor = .systemBackground
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
 
         tableView.dataSource = self
         tableView.delegate = self
@@ -398,7 +406,11 @@ extension TunnelsListTableViewController: TunnelsManagerListDelegate {
                 (splitViewController.viewControllers[0] as? UINavigationController)?.popToRootViewController(animated: false)
             } else {
                 let detailVC = UIViewController()
-                detailVC.view.backgroundColor = .systemBackground
+                if #available(iOS 13.0, *) {
+                    detailVC.view.backgroundColor = .systemBackground
+                } else {
+                    detailVC.view.backgroundColor = .white
+                }
                 let detailNC = UINavigationController(rootViewController: detailVC)
                 splitViewController.showDetailViewController(detailNC, sender: self)
             }

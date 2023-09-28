@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+// Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import UIKit
 
@@ -11,7 +11,11 @@ class MainViewController: UISplitViewController {
 
     init() {
         let detailVC = UIViewController()
-        detailVC.view.backgroundColor = .systemBackground
+        if #available(iOS 13.0, *) {
+            detailVC.view.backgroundColor = .systemBackground
+        } else {
+            detailVC.view.backgroundColor = .white
+        }
         let detailNC = UINavigationController(rootViewController: detailVC)
 
         let masterVC = TunnelsListTableViewController()

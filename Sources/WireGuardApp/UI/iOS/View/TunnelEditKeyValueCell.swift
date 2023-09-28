@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+// Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import UIKit
 
@@ -30,7 +30,11 @@ class TunnelEditEditableKeyValueCell: TunnelEditKeyValueCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         copyableGesture = false
-        valueTextField.textColor = .label
+        if #available(iOS 13.0, *) {
+            valueTextField.textColor = .label
+        } else {
+            valueTextField.textColor = .black
+        }
         valueTextField.isEnabled = true
         valueLabelScrollView.isScrollEnabled = false
         valueTextField.widthAnchor.constraint(equalTo: valueLabelScrollView.widthAnchor).isActive = true

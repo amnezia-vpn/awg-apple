@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Copyright © 2018-2023 WireGuard LLC. All Rights Reserved.
+// Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import UIKit
 import SystemConfiguration.CaptiveNetwork
@@ -185,7 +185,11 @@ extension SSIDOptionEditTableViewController {
     private func noSSIDsCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell: TextCell = tableView.dequeueReusableCell(for: indexPath)
         cell.message = tr("tunnelOnDemandNoSSIDs")
-        cell.setTextColor(.secondaryLabel)
+        if #available(iOS 13.0, *) {
+            cell.setTextColor(.secondaryLabel)
+        } else {
+            cell.setTextColor(.gray)
+        }
         cell.setTextAlignment(.center)
         return cell
     }
@@ -264,8 +268,23 @@ extension SSIDOptionEditTableViewController {
         #if targetEnvironment(simulator)
         completionHandler("Simulator Wi-Fi")
         #else
-        NEHotspotNetwork.fetchCurrent { hotspotNetwork in
-            completionHandler(hotspotNetwork?.ssid)
+        if #available(iOS 14, *) {
+            NEHotspotNetwork.fetchCurrent { hotspotNetwork in
+                completionHandler(hotspotNetwork?.ssid)
+            }
+        } else {
+            if let supportedInterfaces = CNCopySupportedInterfaces() as? [CFString] {
+                for interface in supportedInterfaces {
+                    if let networkInfo = CNCopyCurrentNetworkInfo(interface) {
+                        if let ssid = (networkInfo as NSDictionary)[kCNNetworkInfoKeySSID as String] as? String {
+                            completionHandler(!ssid.isEmpty ? ssid : nil)
+                            return
+                        }
+                    }
+                }
+            }
+
+            completionHandler(nil)
         }
         #endif
     }
